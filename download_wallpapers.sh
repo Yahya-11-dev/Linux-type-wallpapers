@@ -12,8 +12,9 @@ Options:
   -h, --help         Show this help message
 
 Examples:
-  $0 links.txt
-  $0 -o my-wallpapers https://example.com/image1.jpg https://example.com/image2.png
+  $0 links.txtcd ~/Linux-type-wallpapers
+chmod +x download_wallpapers.sh
+./download_wallpapers.sh links.txt
 EOF
   exit 1
 }

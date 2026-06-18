@@ -1,0 +1,6 @@
+Run from repo folder:
+
+chmod +x download_wallpapers.sh
+./download_wallpapers.sh links.txt
+
+If you get "Error: no URLs provided.", make sure you are passing the file name on the command line and that links.txt is not empty.

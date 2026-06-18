@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if [[ -f "$0" ]]; then
+  chmod +x "$0" 2>/dev/null || true
+fi
+
 ESC="\033"
 COLOR_RESET="${ESC}[0m"
 COLOR_INFO="${ESC}[1;34m"
@@ -62,6 +66,7 @@ get_default_output_dir() {
 output_dir="$(get_default_output_dir)"
 links_file=""
 urls=()
+default_links_file="links.txt"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -98,6 +103,10 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+
+if [[ -z "$links_file" && ${#urls[@]} -eq 0 && -f "$default_links_file" ]]; then
+  links_file="$default_links_file"
+fi
 
 if [[ -n "$links_file" ]]; then
   while IFS= read -r line || [[ -n "$line" ]]; do

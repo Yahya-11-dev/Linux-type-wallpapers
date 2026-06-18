@@ -6,6 +6,28 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+COLOR_RESET = "\033[0m"
+COLOR_INFO = "\033[1;34m"
+COLOR_SUCCESS = "\033[1;32m"
+COLOR_WARN = "\033[1;33m"
+COLOR_ERROR = "\033[1;31m"
+
+
+def info(message):
+    print(f"{COLOR_INFO}{message}{COLOR_RESET}")
+
+
+def success(message):
+    print(f"{COLOR_SUCCESS}{message}{COLOR_RESET}")
+
+
+def warn(message):
+    print(f"{COLOR_WARN}{message}{COLOR_RESET}")
+
+
+def error(message):
+    print(f"{COLOR_ERROR}{message}{COLOR_RESET}", file=sys.stderr)
+
 
 def default_output_dir():
     home = os.path.expanduser("~")
@@ -79,10 +101,10 @@ def download_image(url, output_dir, index):
 
     try:
         urllib.request.urlretrieve(url, file_path)
-        print(f"Downloaded {url} -> {file_path}")
+        info(f"Downloaded {url} -> {file_path}")
         return file_path
     except (urllib.error.URLError, urllib.error.HTTPError) as exc:
-        print(f"Failed to download {url}: {exc}", file=sys.stderr)
+        error(f"Failed to download {url}: {exc}")
         return None
 
 
@@ -130,10 +152,11 @@ def main():
         urls.extend(load_links_from_file(args.links_file))
 
     if not urls:
-        print("No URLs provided. Use --links-file or pass URLs on the command line.")
+        error("No URLs provided. Use --links-file or pass URLs on the command line.")
         sys.exit(1)
 
     os.makedirs(args.output, exist_ok=True)
+    info(f"Downloading wallpapers into: {args.output}")
     downloaded = []
 
     for index, url in enumerate(urls, start=1):
@@ -142,11 +165,11 @@ def main():
             downloaded.append(result)
 
     if not downloaded:
-        print("No wallpapers were downloaded.")
+        error("No wallpapers were downloaded.")
         sys.exit(1)
 
-    print(f"Downloaded {len(downloaded)} wallpaper(s) to {args.output}.")
-    print("Check your wallpapers.")
+    success(f"Downloaded {len(downloaded)} wallpaper(s) to {args.output}.")
+    success("Check your wallpapers.")
 
     if args.set:
         last_image = downloaded[-1]

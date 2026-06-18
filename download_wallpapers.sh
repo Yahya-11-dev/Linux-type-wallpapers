@@ -1,20 +1,42 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+ESC="\033"
+COLOR_RESET="${ESC}[0m"
+COLOR_INFO="${ESC}[1;34m"
+COLOR_SUCCESS="${ESC}[1;32m"
+COLOR_WARN="${ESC}[1;33m"
+COLOR_ERROR="${ESC}[1;31m"
+
+info() {
+  printf "%s%s%s\n" "$COLOR_INFO" "$1" "$COLOR_RESET"
+}
+
+success() {
+  printf "%s%s%s\n" "$COLOR_SUCCESS" "$1" "$COLOR_RESET"
+}
+
+warn() {
+  printf "%s%s%s\n" "$COLOR_WARN" "$1" "$COLOR_RESET"
+}
+
+error() {
+  printf "%s%s%s\n" "$COLOR_ERROR" "$1" "$COLOR_RESET" >&2
+}
+
 usage() {
   cat <<EOF
 Usage: $0 [options] <links-file> [url1 url2 ...]
 
-Download wallpaper images to a local directory.
+Download wallpaper images to the user's wallpaper directory by default.
 
 Options:
   -o, --output DIR   Output directory (default: user wallpaper directory)
   -h, --help         Show this help message
 
 Examples:
-  $0 links.txtcd ~/Linux-type-wallpapers
-chmod +x download_wallpapers.sh
-./download_wallpapers.sh links.txt
+  $0 links.txt
+  $0 -o my-wallpapers https://example.com/image1.jpg https://example.com/image2.png
 EOF
   exit 1
 }
@@ -88,7 +110,7 @@ if [[ -n "$links_file" ]]; then
 fi
 
 if [[ ${#urls[@]} -eq 0 ]]; then
-  echo "Error: no URLs provided." >&2
+  error "Error: no URLs provided."
   usage
 fi
 
@@ -126,7 +148,7 @@ for url in "${urls[@]}"; do
     file_path="$output_dir/${base}_$index.$ext"
   fi
 
-  echo "Downloading $url -> $file_path"
+  info "Downloading $url -> $file_path"
   if [[ "$download_cmd" == curl* ]]; then
     curl -L -sS -o "$file_path" "$url"
   else
@@ -135,5 +157,5 @@ for url in "${urls[@]}"; do
   index=$((index + 1))
 done
 
-echo "Downloaded ${#urls[@]} wallpaper(s) to $output_dir."
-echo "Check your wallpapers."
+success "Downloaded ${#urls[@]} wallpaper(s) to $output_dir."
+success "Check your wallpapers."

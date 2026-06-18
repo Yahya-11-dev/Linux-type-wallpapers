@@ -7,7 +7,7 @@ fi
 
 ESC="\033"
 COLOR_RESET="${ESC}[0m"
-COLOR_INFO="${ESC}[1;34m"
+COLOR_INFO="${ESC}[1;32m"
 COLOR_SUCCESS="${ESC}[1;32m"
 COLOR_WARN="${ESC}[1;33m"
 COLOR_ERROR="${ESC}[1;31m"
@@ -17,7 +17,7 @@ info() {
 }
 
 success() {
-  printf "%s%s%s\n" "$COLOR_SUCCESS" "$1" "$COLOR_RESET"
+  printf "\n%s%s%s\n" "$COLOR_SUCCESS" "$1" "$COLOR_RESET"
 }
 
 warn() {
@@ -25,7 +25,7 @@ warn() {
 }
 
 error() {
-  printf "%s%s%s\n" "$COLOR_ERROR" "$1" "$COLOR_RESET" >&2
+  printf "\n%s%s%s\n\n" "$COLOR_ERROR" "$1" "$COLOR_RESET" >&2
 }
 
 usage() {
@@ -47,15 +47,17 @@ EOF
 
 get_default_output_dir() {
   if [[ -n "${HOME:-}" ]]; then
-    output_dir="$HOME/Pictures/Wallpapers"
+    output_dir="$HOME/.local/share/backgrounds"
     if [[ -f "$HOME/.config/user-dirs.dirs" ]]; then
       picdir=$(grep '^XDG_PICTURES_DIR' "$HOME/.config/user-dirs.dirs" | head -n 1 | cut -d= -f2-)
       picdir=${picdir#\"}
       picdir=${picdir%\"}
       picdir=${picdir/#\$HOME/$HOME}
       if [[ -n "$picdir" ]]; then
-        output_dir="$picdir/Wallpapers"
+        output_dir="${picdir%/}/Wallpapers"
       fi
+    elif [[ -d "$HOME/Pictures" ]]; then
+      output_dir="$HOME/Pictures/Wallpapers"
     fi
     printf '%s' "$output_dir"
   else
